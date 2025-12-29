@@ -20,43 +20,19 @@ Follow these steps to get the project running locally.
 - **npm** (comes with Node.js)
 - **OpenRouter API Key** (Get one at [openrouter.ai])
 
-### 2. Implementation Steps
+### 2. Quick Start (Unified Mode)
 
-#### Step A: Backend Configuration
-1. Navigate to the backend folder:
-   ```bash
-   cd backend
-   ```
-2. Create a `.env` file (you can copy `.env.example`):
-   ```bash
-   cp .env.example .env
-   ```
-3. Open `.env` and fill in your details:
-   - `OPENROUTER_API_KEY`: Your real API key.
-   - `LLM_MODEL`: The model you want to use .
-   - `PORT`: (Optional) Defaults to `3001`.
+This is the fastest way to run the project. It builds the frontend and serves it via the backend on a single port.
 
-4. Install dependencies and start the server:
+1. **Navigate to the Root folder**: `spur-task`
+2. **Setup your Environment**:
+   - Create `backend/.env` (use `backend/.env.example` as a template).
+   - Add your `OPENROUTER_API_KEY` and `LLM_MODEL`.
+3. **Run the following command**:
    ```bash
-   npm install
-   npm run dev
+   npm run build && npm run start
    ```
-   *The backend will be running at `http://localhost:3001`.*
-
-#### Step B: Frontend Configuration
-1. Open a new terminal and navigate to the frontend folder:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-   *The frontend will be running at `http://localhost:5173`.*
+4. **Open your browser**: [http://localhost:3001](http://localhost:3001)
 
 ---
 
@@ -76,13 +52,11 @@ To deploy both frontend and backend together as a single service on Render:
    - `LLM_MODEL`: Your preferred model.
    - `NODE_ENV`: `production`
 
-Render will automatically build the frontend, build the backend, and start the server which serves both the API and the static frontend files.
-
 ---
 
 ## 📂 Project Structure
 - `backend/`: Express server, SQLite database, and LLM logic.
-- `frontend/`: React application with Vite, Tailwind-like CSS, and API services.
+- `frontend/`: React application with Vite, premium CSS, and API services.
 - `chat.db`: SQLite database file (created automatically upon first message).
 
 ---
