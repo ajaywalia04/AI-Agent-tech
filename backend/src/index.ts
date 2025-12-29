@@ -6,19 +6,19 @@ import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
 import { createSession, saveMessage, getHistory } from './db';
 import { generateReply } from './llm';
+import path from 'path';
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-console.log('OPENROUTER_API_KEY set:', !!process.env.OPENROUTER_API_KEY);
-if (process.env.OPENROUTER_API_KEY) {
-    console.log('Key starts with:', process.env.OPENROUTER_API_KEY.substring(0, 10) + '...');
-}
-
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Serve static files from the React app
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
+
+// API Routes
 app.post('/chat/message', async (req, res) => {
     const { message, sessionId: providedSessionId } = req.body;
 
@@ -26,25 +26,17 @@ app.post('/chat/message', async (req, res) => {
         return res.status(400).json({ error: 'Message is required and cannot be empty.' });
     }
 
-    // Truncate very long messages
     const sanitizedMessage = message.slice(0, 1000);
-
     const sessionId = providedSessionId || uuidv4();
 
     try {
-        // Ensure session exists
         createSession(sessionId);
-
-        // Save user message
         saveMessage(sessionId, 'user', sanitizedMessage);
-
-        // Get history for context
         const history = getHistory(sessionId);
 
-        // Generate AI reply
+        // Generate AI reply (exclude the message we just saved to get clean history)
         const reply = await generateReply(history.slice(0, -1), sanitizedMessage);
 
-        // Save AI reply
         saveMessage(sessionId, 'assistant', reply);
 
         res.json({ reply, sessionId });
@@ -54,7 +46,6 @@ app.post('/chat/message', async (req, res) => {
     }
 });
 
-// Fetch history for a session
 app.get('/chat/history/:sessionId', (req, res) => {
     const { sessionId } = req.params;
     try {
@@ -65,6 +56,16 @@ app.get('/chat/history/:sessionId', (req, res) => {
     }
 });
 
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+    if (frontendPath) {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    } else {
+        res.status(404).send('Frontend not found');
+    }
+});
+
 app.listen(port, () => {
-    console.log(`Backend server running at http://localhost:${port}`);
+    console.log(`Server running at port ${port}`);
 });

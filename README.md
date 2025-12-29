@@ -60,6 +60,26 @@ Follow these steps to get the project running locally.
 
 ---
 
+## 🚀 Deployment (Render)
+
+To deploy both frontend and backend together as a single service on Render:
+
+1. **Create a New Web Service** on Render.
+2. **Connect your Repository**.
+3. **Configure Settings**:
+   - **Environment**: `Node`
+   - **Build Command**: `npm run build`
+   - **Start Command**: `npm run start`
+   - **Root Directory**: (Leave blank)
+4. **Environment Variables**:
+   - `OPENROUTER_API_KEY`: Your API key.
+   - `LLM_MODEL`: Your preferred model.
+   - `NODE_ENV`: `production`
+
+Render will automatically build the frontend, build the backend, and start the server which serves both the API and the static frontend files.
+
+---
+
 ## 📂 Project Structure
 - `backend/`: Express server, SQLite database, and LLM logic.
 - `frontend/`: React application with Vite, Tailwind-like CSS, and API services.
